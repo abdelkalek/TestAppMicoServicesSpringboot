@@ -1,0 +1,3 @@
+# Centralized overrides for gateway-service
+uberlight:
+  service-description: "API gateway (config served centrally)"

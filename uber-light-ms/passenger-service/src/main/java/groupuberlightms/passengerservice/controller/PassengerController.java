@@ -1,8 +1,11 @@
 package groupuberlightms.passengerservice.controller;
 
-import groupuberlightms.passengerservice.entity.Passenger;
+import groupuberlightms.passengerservice.dto.PassengerRequest;
+import groupuberlightms.passengerservice.dto.PassengerResponse;
 import groupuberlightms.passengerservice.service.PassengerService;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/passengers")
+@Tag(name = "Passengers", description = "Passenger profile management")
 public class PassengerController {
 
     private final PassengerService service;
@@ -28,38 +32,38 @@ public class PassengerController {
     }
 
     @GetMapping
-    public List<Passenger> getAll() {
+    @Operation(summary = "List all passengers")
+    public List<PassengerResponse> getAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Passenger> getById(@PathVariable Long id) {
-        return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @Operation(summary = "Get a passenger by id")
+    public PassengerResponse getById(@PathVariable Long id) {
+        return service.findById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Passenger> create(@RequestBody Passenger passenger) {
-        Passenger created = service.create(passenger);
+    @Operation(summary = "Create a passenger")
+    public ResponseEntity<PassengerResponse> create(@Valid @RequestBody PassengerRequest request) {
+        PassengerResponse created = service.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.getId())
+                .buildAndExpand(created.id())
                 .toUri();
         return ResponseEntity.created(location).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Passenger> update(@PathVariable Long id, @RequestBody Passenger passenger) {
-        return service.update(id, passenger)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @Operation(summary = "Update a passenger")
+    public PassengerResponse update(@PathVariable Long id, @Valid @RequestBody PassengerRequest request) {
+        return service.update(id, request);
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a passenger")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return service.delete(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,0 +1,3 @@
+# Centralized overrides for passenger-service
+uberlight:
+  service-description: "Passenger profiles service (config served centrally)"

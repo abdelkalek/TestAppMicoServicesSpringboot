@@ -1,0 +1,3 @@
+# Shared configuration served to ALL services (lowest precedence)
+uberlight:
+  config-source: config-server
