@@ -1,3 +1,29 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: gateway-service
+  config:
+    # optional: so the app still boots when no Config Server is running
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: passenger-service
+              uri: lb://passenger-service
+              predicates:
+                - Path=/api/passengers/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
