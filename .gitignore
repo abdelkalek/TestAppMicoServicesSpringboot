@@ -8,3 +8,6 @@ target/
 # OS
 .DS_Store
 Thumbs.db
+
+# Design docs (kept local only)
+uber-light-ms/docs/
